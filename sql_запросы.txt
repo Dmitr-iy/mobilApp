@@ -47,4 +47,20 @@ GROUP BY
     ad.doctor_id, ad.name
 HAVING
     (POWER(69.1 * (MAX(al.latitude) - 65), 2) + POWER(69.1 * (45 - MAX(al.longitude)) * COS(MAX(al.latitude) / 57.3), 2)) > 1;
+    
+    
+5.SQL-запрос для вывода всех врачей, для которых нет информации о перемещениях за последний час:
+(PostgresQL)
+
+SELECT
+    d.doctor_id,
+    d.name
+FROM                                    
+    app_doctor AS d
+LEFT JOIN
+    app_location AS l
+ON        
+    d.doctor_id = l.doctor_id
+WHERE              
+    l.timestamp IS NULL OR l.timestamp < NOW() - INTERVAL '1 hour';
 
