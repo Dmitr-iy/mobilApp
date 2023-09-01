@@ -1,0 +1,50 @@
+1.Структура таблиц базы данных:
+
+a. Таблица "Doctor" :
+
+    doctor_id (целое число, первичный ключ)
+    имя (строка)
+    специализация (строка)
+
+b. Таблица "Location" :
+
+    location_id (целое число, первичный ключ)
+    doctor_id (целое число, внешний ключ, связан с doctor_id в таблице Doctor)
+    широта (число с плавающей точкой)
+    долгота (число с плавающей точкой)
+    дата и время (дата и время, когда была получена информация о местоположении)
+
+2.Индексы:
+
+    В таблице "Doctor" создаем индекс на поле "doctor_id".
+    В таблице "Location" создаем индекс на поля "doctor_id" и "дата и время", чтобы быстро выбирать местоположение врачей по дате и времени.
+
+3.Параметры API:
+Для сохранения информации о местоположении врачей, API должно принимать следующие параметры:
+
+    doctor_id: Идентификатор врача.
+    latitude: Широта текущего местоположения.
+    longitude: Долгота текущего местоположения.
+    timestamp: Дата и время получения информации о местоположении.
+
+4.SQL-запрос для вывода информации о врачах, переместившихся более чем на 1 км за последние 10 минут:
+(PostgresQL)
+
+SELECT
+    ad.doctor_id,
+    ad.name,
+    MAX(al.longitude) AS last_longitude,
+    MAX(al.timestamp) AS last_timestamp
+FROM            
+    app_doctor ad
+INNER JOIN
+    app_location al
+ON                 
+    ad.doctor_id = al.doctor_id
+WHERE                          
+    al.timestamp >= NOW() - INTERVAL '10 minutes'
+GROUP BY                                         
+    ad.doctor_id, ad.name
+HAVING
+    (POWER(69.1 * (MAX(al.latitude) - 65), 2) + POWER(69.1 * (45 - MAX(al.longitude)) * COS(MAX(al.latitude) / 57.3), 2)) > 1;
+
