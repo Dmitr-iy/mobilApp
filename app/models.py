@@ -4,6 +4,7 @@ from django.db import models
 class Doctor(models.Model):
     doctor_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+    specialization = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
@@ -17,4 +18,3 @@ class Location(models.Model):
 
     def __str__(self):
         return f"Location of {self.doctor.name} at {self.timestamp}"
-
